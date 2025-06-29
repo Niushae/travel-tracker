@@ -7,7 +7,7 @@ const authStore = useAuthStore();
     <div
       tabindex="0"
       role="button"
-      class="btn m-1"
+      class="flex gap-2 items-center m-1 cursor-pointer"
     >
       <div v-if="authStore.user.image" class="avatar flex">
         <div class="w-8 rounded-full">
