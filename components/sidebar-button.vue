@@ -7,14 +7,15 @@ const props = defineProps<{
 }>();
 
 const route = useRoute();
+const themeStore = useThemeStore();
 </script>
 
 <template>
   <div class="tooltip tooltip-right" :data-tip="showLabel ? undefined : props.label">
     <NuxtLink
       :to="props.href"
-      :class="{ 'bg-primary': route.path === props.href }"
-      class="gap-2 py-2 pr-2 pl-5 hover:bg-primary cursor-pointer flex flex-1 whitespace-nowrap overflow-hidden"
+      :class="{ 'bg-primary': route.path === props.href && themeStore.isDark, 'bg-accent-content text-white': route.path === props.href && !themeStore.isDark, 'hover:bg-primary': themeStore.isDark, 'hover:bg-accent-content hover:text-white': !themeStore.isDark }"
+      class="gap-2 py-4 pr-2 pl-5 cursor-pointer flex flex-1 whitespace-nowrap overflow-hidden transition-all"
     >
       <Icon
         :name="props.icon"
