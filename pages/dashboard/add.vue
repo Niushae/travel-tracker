@@ -20,19 +20,19 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     submitError.value = "";
     loading.value = true;
-    await $csrfFetch("/api/locations", {
+    await ($csrfFetch as any)("/api/locations", {
       method: "POST",
       body: values,
     });
     submitted.value = true;
-    navigateTo("/");
+    navigateTo("/dashboard");
   }
   catch (e) {
     const error = e as FetchError;
     if (error.data?.data) {
       setErrors(error.data?.data);
     }
-    submitError.value = error.statusMessage || "An unknown error occurred";
+    submitError.value = error.data?.statusMessage || error.statusMessage || "An unknown error occurred";
   }
   loading.value = false;
 });
