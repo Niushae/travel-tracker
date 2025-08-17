@@ -1,11 +1,9 @@
 import type { DrizzleError } from "drizzle-orm";
 
-import { and, eq, like, or } from "drizzle-orm";
-import { customAlphabet } from "nanoid";
 import slugify from "slug";
 
-import db from "~/lib/db";
-import { InsertLocation, location } from "~/lib/db/schema";
+import { findLocationByName, findUniqueSlug, insertLocation } from "~/lib/db/queries/location";
+import { InsertLocation } from "~/lib/db/schema";
 
 export default defineEventHandler(async (event) => {
   if (!event.context.user) {
@@ -39,7 +37,7 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  const existingLocation = await db.query.location.findFirst({ where: and(eq(location.name, result.data.name), eq(location.userId, event.context.user.id)) });
+  const existingLocation = await findLocationByName(result.data, event.context.user.id);
 
   if (existingLocation) {
     return sendError(event, createError({
@@ -48,33 +46,10 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  let slug = slugify(result.data.name);
-  const existing = await db.query.location.findMany({ where: or(eq(location.slug, `${slug}`), like(location.slug, `^${slug}-[a-z0-9]{5}$`)) });
-
-  if (existing.length > 0) {
-    let newSlug = generateSlug();
-    for (let i = 0; i < existing.length; i++) {
-      if (existing[i].slug === newSlug) {
-        newSlug = generateSlug();
-        i = 0;
-      }
-    }
-    slug = newSlug;
-  }
-
-  function generateSlug() {
-    const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvxyz", 5);
-    const slugId = `${slug}-${nanoid()}`;
-    return slugId;
-  }
+  const slug = await findUniqueSlug(slugify(result.data.name));
 
   try {
-    const created = await db.insert(location).values({
-      ...result.data,
-      slug,
-      userId: event.context.user.id,
-    }).returning();
-    return created;
+    return insertLocation(result.data, slug, event.context.user.id);
   }
   catch (e) {
     const error = e as DrizzleError;
