@@ -2,11 +2,11 @@
 import type { FetchError } from "ofetch";
 
 import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 
 import { InsertLocation } from "~/lib/db/schema/location";
 
-const { $csrfFetch } = useNuxtApp();
 const router = useRouter();
 const loading = ref(false);
 const submitted = ref(false);
@@ -20,7 +20,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     submitError.value = "";
     loading.value = true;
-    await ($csrfFetch as any)("/api/locations", {
+    await $fetch("/api/locations", {
       method: "POST",
       body: values,
     });
