@@ -7,7 +7,7 @@ const props = defineProps<{
 }>();
 
 const route = useRoute();
-const themeStore = useThemeStore();
+const themeStore = storeToRefs(useThemeStore());
 </script>
 
 <template>
