@@ -20,7 +20,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     submitError.value = "";
     loading.value = true;
-    await $fetch("/api/locations", {
+    await useCsrfFetch("/api/locations", {
       method: "POST",
       body: values,
     });
