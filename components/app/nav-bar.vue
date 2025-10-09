@@ -6,7 +6,7 @@ const themeStore = storeToRefs(useThemeStore());
   <ClientOnly>
     <div
       class="navbar"
-      :class="{ 'text-gray-800 bg-base-300': !themeStore.isDark, 'bg-base-200 text-white': themeStore.isDark }"
+      :class="{ 'bg-base-300': !themeStore.isDark, 'bg-base-200': themeStore.isDark }"
     >
       <div class="navbar-start">
         <NuxtLink to="/" class="btn btn-ghost text-xl">
