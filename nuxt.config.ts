@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-05-15",
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
-  vite: { plugins: [tailwindcss()] },
+  vite: { plugins: [tailwindcss()], optimizeDeps: { include: ["maplibre-gl"] } },
   modules: [
     "@nuxt/eslint",
     "@nuxt/icon",
@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@vee-validate/nuxt",
     "nuxt-csurf",
+    "nuxt-maplibre",
   ],
   eslint: {
     config: {
