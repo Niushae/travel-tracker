@@ -4,6 +4,7 @@ const props = defineProps<{
   icon: string;
   href: string;
   showLabel: boolean;
+  iconColor?: string;
 }>();
 
 const route = useRoute();
@@ -14,12 +15,13 @@ const themeStore = storeToRefs(useThemeStore());
   <div class="tooltip tooltip-right" :data-tip="showLabel ? undefined : props.label">
     <NuxtLink
       :to="props.href"
-      :class="{ 'bg-primary': route.path === props.href && themeStore.isDark, 'bg-accent-content text-white': route.path === props.href && !themeStore.isDark, 'hover:bg-primary': themeStore.isDark, 'hover:bg-accent-content hover:text-white': !themeStore.isDark }"
+      :class="{ 'bg-primary/60': route.path === props.href && themeStore.isDark, 'bg-accent-content text-white': route.path === props.href && !themeStore.isDark, 'hover:bg-primary/60': themeStore.isDark, 'hover:bg-accent-content hover:text-white': !themeStore.isDark }"
       class="gap-2 py-4 pr-2 pl-5 cursor-pointer flex flex-1 whitespace-nowrap overflow-hidden transition-all"
     >
       <Icon
         :name="props.icon"
         class="flex-shrink-0"
+        :class="iconColor"
         size="24"
       />
       <Transition name="fade">
