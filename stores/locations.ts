@@ -19,13 +19,9 @@ export const useLocationStore = defineStore("useLocationStore", () => {
         label: location.name,
         icon: "tabler:map-pin",
         href: "#",
+        location,
       }));
-      mapStore.mapPoints = locations.map(location => ({
-        id: location.id,
-        name: location.name,
-        lat: location.lat,
-        long: location.long,
-      }));
+      mapStore.mapPoints = locations;
     }
     sidebarStore.loading = status.value === "pending";
   });
