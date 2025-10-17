@@ -4,6 +4,7 @@ const props = defineProps<{
   icon: string;
   href: string;
   showLabel: boolean;
+  iconColor?: string;
 }>();
 
 const route = useRoute();
@@ -20,6 +21,7 @@ const themeStore = storeToRefs(useThemeStore());
       <Icon
         :name="props.icon"
         class="flex-shrink-0"
+        :class="iconColor"
         size="24"
       />
       <Transition name="fade">
