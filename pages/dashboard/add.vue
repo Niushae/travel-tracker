@@ -5,14 +5,16 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 
+import { CENTER_USA } from "~/lib/constants";
 import { InsertLocation } from "~/lib/db/schema/location";
 
 const router = useRouter();
 const loading = ref(false);
 const submitted = ref(false);
 const submitError = ref("");
+const mapStore = useMapStore();
 
-const { handleSubmit, errors, meta, setErrors } = useForm({
+const { handleSubmit, errors, meta, setErrors, setFieldValue } = useForm({
   validationSchema: toTypedSchema(InsertLocation),
 });
 
@@ -37,6 +39,23 @@ const onSubmit = handleSubmit(async (values) => {
   loading.value = false;
 });
 
+effect(() => {
+  if (mapStore.addedPoint) {
+    setFieldValue("long", mapStore.addedPoint.long);
+    setFieldValue("lat", mapStore.addedPoint.lat);
+  }
+});
+
+onMounted(() => {
+  mapStore.addedPoint = {
+    id: "1",
+    name: "Added Point",
+    description: "",
+    long: CENTER_USA[0],
+    lat: CENTER_USA[1],
+  };
+});
+
 onBeforeRouteLeave(() => {
   if (meta.value.dirty && !submitted.value) {
     // eslint-disable-next-line no-alert
@@ -45,6 +64,7 @@ onBeforeRouteLeave(() => {
       return false;
     }
   }
+  mapStore.addedPoint = null;
   return true;
 });
 </script>

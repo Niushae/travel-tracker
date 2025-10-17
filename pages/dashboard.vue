@@ -14,7 +14,10 @@ onMounted(() => {
     <div class="absolute bg-base-200 flex flex-col flex-1 z-10 h-full">
       <AppSideBar />
     </div>
-    <div class="flex-1 grid grid-rows-2 overflow-hidden max-w-5xl mx-auto">
+    <div
+      class="grid overflow-hidden max-w-5xl mx-auto min-h-screen"
+      :class="{ 'grid-cols-2': route.path !== '/dashboard', 'grid-rows-2': route.path === '/dashboard' }"
+    >
       <NuxtPage />
       <AppMap />
     </div>

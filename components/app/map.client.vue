@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { LngLat } from "maplibre-gl";
+
 import { CENTER_USA } from "~/lib/constants";
 
 const colorMode = useColorMode();
@@ -9,6 +11,13 @@ const style = computed(() =>
 );
 const center = ref(CENTER_USA);
 const zoom = ref(3);
+
+function updateAddedPoint(location: LngLat) {
+  if (mapStore.addedPoint) {
+    mapStore.addedPoint.lat = location.lat;
+    mapStore.addedPoint.long = location.lng;
+  }
+}
 
 onMounted(() => {
   if (mapStore.mapPoints.length === 0) {
@@ -41,6 +50,25 @@ onMounted(() => {
       :zoom="zoom"
     >
       <MglNavigationControl />
+      <MglMarker
+        v-if="mapStore.addedPoint"
+        draggable
+        :coordinates="CENTER_USA"
+        @update:coordinates="updateAddedPoint"
+      >
+        <template #marker>
+          <div
+            class="tooltip tooltip-top"
+            data-tip="Drag to your desired location"
+          >
+            <Icon
+              name="tabler:map-pin-filled"
+              size="35"
+              class="text-warning"
+            />
+          </div>
+        </template>
+      </MglMarker>
       <MglMarker
         v-for="point in mapStore.mapPoints"
         :key="point.id"
