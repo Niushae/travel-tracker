@@ -15,11 +15,11 @@ onMounted(() => {
       <AppSideBar />
     </div>
     <div
-      class="grid overflow-hidden max-w-5xl mx-auto min-h-screen"
-      :class="{ 'grid-cols-2': route.path !== '/dashboard', 'grid-rows-2': route.path === '/dashboard' }"
+      class="grid overflow-hidden min-h-screen"
+      :class="{ 'grid-cols-4': route.path !== '/dashboard', 'grid-rows-2 max-w-5xl mx-auto': route.path === '/dashboard' }"
     >
-      <NuxtPage />
-      <AppMap />
+      <NuxtPage :class="{ 'col-span-2': route.path !== '/dashboard' }" />
+      <AppMap :class="{ 'col-span-2': route.path !== '/dashboard' }" />
     </div>
   </div>
 </template>

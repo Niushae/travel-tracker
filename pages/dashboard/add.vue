@@ -14,8 +14,14 @@ const submitted = ref(false);
 const submitError = ref("");
 const mapStore = useMapStore();
 
-const { handleSubmit, errors, meta, setErrors, setFieldValue } = useForm({
+const { handleSubmit, errors, meta, setErrors, setFieldValue, controlledValues } = useForm({
   validationSchema: toTypedSchema(InsertLocation),
+  initialValues: {
+    name: "",
+    description: "",
+    long: CENTER_USA[0],
+    lat: CENTER_USA[1],
+  },
 });
 
 const onSubmit = handleSubmit(async (values) => {
@@ -38,6 +44,12 @@ const onSubmit = handleSubmit(async (values) => {
   }
   loading.value = false;
 });
+
+function formatNumber(value?: number) {
+  if (!value)
+    return 0;
+  return value.toFixed(5);
+};
 
 effect(() => {
   if (mapStore.addedPoint) {
@@ -70,9 +82,9 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
-  <div class="container max-w-md mx-auto">
+  <div class="container max-w-md ml-auto mr-10">
     <div class="my-4">
-      <h1 class="text-lg">
+      <h1 class="text-2xl mb-2">
         Add location
       </h1>
       <p class="text-sm">
@@ -100,18 +112,15 @@ onBeforeRouteLeave(() => {
         field-type="textarea"
         :error="errors.description"
       />
-      <AppFormField
-        :disabled="loading"
-        name="lat"
-        label="Latitude"
-        :error="errors.lat"
-      />
-      <AppFormField
-        :disabled="loading"
-        name="long"
-        label="Longitude"
-        :error="errors.long"
-      />
+      <p class="text-sm">
+        Drag the <Icon name="tabler:map-pin" class="text-warning" /> marker to your desired location.
+      </p>
+      <p class="text-sm">
+        Or double click on the map to set the location.
+      </p>
+      <p class="text-xs text-gray-500">
+        {{ formatNumber(controlledValues.lat) }}, {{ formatNumber(controlledValues.long) }}
+      </p>
       <div class="flex justify-end gap-2">
         <button
           :disabled="loading"
