@@ -5,6 +5,8 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
 
+import type { NominatimResult } from "~/lib/types";
+
 import { CENTER_USA } from "~/lib/constants";
 import { InsertLocation } from "~/lib/db/schema/location";
 
@@ -40,7 +42,7 @@ const onSubmit = handleSubmit(async (values) => {
     if (error.data?.data) {
       setErrors(error.data?.data);
     }
-    submitError.value = error.data?.statusMessage || error.statusMessage || "An unknown error occurred";
+    submitError.value = getFetchErrorMessage(error);
   }
   loading.value = false;
 });
@@ -50,6 +52,18 @@ function formatNumber(value?: number) {
     return 0;
   return value.toFixed(5);
 };
+
+function searchResultSelected(result: NominatimResult) {
+  setFieldValue("name", result.display_name);
+  mapStore.addedPoint = {
+    id: result.place_id.toString(),
+    name: "Added Point",
+    description: "",
+    long: Number(result.lon),
+    lat: Number(result.lat),
+    centerMap: true,
+  };
+}
 
 effect(() => {
   if (mapStore.addedPoint) {
@@ -87,9 +101,22 @@ onBeforeRouteLeave(() => {
       <h1 class="text-2xl mb-2">
         Add location
       </h1>
-      <p class="text-sm">
-        A location is a place you have traveled or will travel to. It can be a city, country, state or point of interest. You can add specific times you visited this location after adding it
+      <p>
+        A location is a place you have traveled or will travel to. It can be a city, country, state or point of interest. You can add specific times you visited this location after adding it.
       </p>
+      <br>
+      <p>To set the coordinates: </p>
+      <ul class="list-disc ml-4">
+        <li class="text-sm">
+          Drag the <Icon name="tabler:map-pin" class="text-warning" /> marker to your desired location.
+        </li>
+        <li class="text-sm">
+          Double click on your desired location.
+        </li>
+        <li class="text-sm">
+          Search for a location below.
+        </li>
+      </ul>
     </div>
     <div
       v-if="submitError"
@@ -112,15 +139,10 @@ onBeforeRouteLeave(() => {
         field-type="textarea"
         :error="errors.description"
       />
-      <p class="text-sm">
-        Drag the <Icon name="tabler:map-pin" class="text-warning" /> marker to your desired location.
-      </p>
-      <p class="text-sm">
-        Or double click on the map to set the location.
-      </p>
       <p class="text-xs text-gray-500">
-        {{ formatNumber(controlledValues.lat) }}, {{ formatNumber(controlledValues.long) }}
+        Curent coordinates: {{ formatNumber(controlledValues.lat) }}, {{ formatNumber(controlledValues.long) }}
       </p>
+
       <div class="flex justify-end gap-2">
         <button
           :disabled="loading"
@@ -146,5 +168,7 @@ onBeforeRouteLeave(() => {
         </button>
       </div>
     </form>
+    <div class="divider" />
+    <AppPlaceSearch @result-selected="searchResultSelected" />
   </div>
 </template>
