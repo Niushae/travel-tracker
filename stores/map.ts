@@ -4,7 +4,7 @@ export const useMapStore = defineStore("useMapStore", () => {
   const mapPoints = ref<MapPoint[]>([]);
   const selectedPoint = ref<MapPoint | null>(null);
   const shouldFlyTo = ref(true);
-  const addedPoint = ref<MapPoint | null>(null);
+  const addedPoint = ref<MapPoint & { centerMap?: boolean } | null>(null);
 
   function selectWithoutFlyTo(point: MapPoint | null) {
     shouldFlyTo.value = false;
@@ -60,7 +60,7 @@ export const useMapStore = defineStore("useMapStore", () => {
     });
 
     watch(addedPoint, (newValue, oldValue) => {
-      if (newValue && !oldValue) {
+      if ((newValue && !oldValue) || newValue?.centerMap) {
         const fly = () => map.map?.flyTo({
           center: [newValue.long, newValue.lat],
           zoom: 6,

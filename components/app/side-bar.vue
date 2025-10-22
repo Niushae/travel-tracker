@@ -63,8 +63,6 @@ const themeStore = storeToRefs(useThemeStore());
           :icon="item.icon"
           :href="item.href"
           :icon-color="mapStore.selectedPoint === item.location ? 'text-accent' : ''"
-          @mouseenter="mapStore.selectedPoint = item.location ?? null"
-          @mouseleave="mapStore.selectedPoint = null"
         />
       </div>
       <div class="divider" />
